@@ -1,7 +1,4 @@
-![Datadog Logo](datadog.png)
-
-# DATADOG
-Datadog is a cloud-based monitoring and security platform for IT infrastructure, applications, and services. It helps organizations gain visibility into their systems through metrics, logs, and traces—all in one place.
+![Datadog Logo](datadog.png) Datadog is a cloud-based monitoring and security platform for IT infrastructure, applications, and services. It helps organizations gain visibility into their systems through metrics, logs, and traces—all in one place.
 
 ---
 
