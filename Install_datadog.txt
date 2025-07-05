@@ -1,0 +1,88 @@
+=====================================
+Install DataDog server step by step:
+=====================================
+
+apt-get update && apt-get upgrade -y
+
+key id =  cbc65f0a-0a7c-4ecd-988f-32e13547eedf
+
+DD_API_KEY=04afbd0ac09a2d2f1d06971d28f0cb65 DD_SITE="us5.datadoghq.com" bash -c "$(curl -L https://install.datadoghq.com/scripts/install_script_agent7.sh)" 
+
+ps -eaf | grep data
+
+systemctl status datadog-agent
+
+datadog-agent status
+
+
+======================
+Process Configuration:
+======================
+cd /etc/datadog-agent/
+vim datadog.yaml
+
+process_config:
+  process_collection:
+    enabled: true
+	
+========================
+IO Configuration:
+======================
+sudo -u dd-agent install -m 0640 /etc/datadog-agent/system-probe.yaml.example 
+cd /etc/datadog-agent/system-probe.yaml
+
+system_probe_config:
+  process_config:
+    enabled: true
+
+systemctl restart datadog-agent
+
+
+
+======================
+Network Configuration:
+======================
+/etc/datadog-agent/system-probe.yaml
+
+system_probe_config:
+  enabled: true
+
+network_config:
+  enabled: true
+
+sudo systemctl start datadog-agent-sysprobe
+sudo systemctl enable datadog-agent-sysprobe
+sudo systemctl restart datadog-agent
+
+
+====================
+Docker Integration:
+====================
+usermod -a -G docker dd-agent
+
+Configure the Agent to connect to Docker.
+
+Edit conf.d/docker.d/docker_daemon.yaml :
+
+cd /etc/datadog-agent/conf.d/
+
+init_config:
+
+instances:
+    - url: "unix://var/run/docker.sock"
+
+
+Restart the Agent
+systemctl restart datadog-agent
+
+
+
+
+
+
+
+
+
+
+
+

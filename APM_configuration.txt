@@ -1,0 +1,133 @@
+==============================================
+APM Configuration on DataDog Server:
+==============================================
+
+source : https://archive.apache.org/dist/tomcat/tomcat-10/v10.1.39/bin/
+
+===============================================
+Step1: - Install Java, Tomcat, Configuration
+===============================================
+
+sudo apt-get update -y && apt-get upgrade -y
+sudo apt-get install openjdk-11-jdk -y
+sudo apt install openjdk-11-jdk-headless -y
+sudo apt install apache2 -y 
+
+java --version
+
+cd /opt
+sudo wget https://archive.apache.org/dist/tomcat/tomcat-10/v10.1.39/bin/apache-tomcat-10.1.39.zip
+apt install unzip -y
+unzip apache-tomcat-10.1.39.zip
+cd apache-tomcat-10.1.39/bin/
+chmod -R 755 .
+./startup.sh
+ps -eaf | grep tomcat
+
+cd /opt/apache-tomcat-10/webapp/example/
+find . -name context.xml
+nano ./META-INF/context.xml
+
+disable <valve classname>
+
+cd /opt/apache-tomcat-10/webapp/conf/
+nano tomcat-users.xml 
+
+<tomcat-users>
+  <role rolename="admin-gui"/>
+  <role rolename="manager-gui"/>
+  <user name="tomcat" password="tomcat" roles="admin-gui,manager-gui"/>
+</tomcat-users>
+
+cd apache-tomcat-10.1.39/bin/
+./shutdown.sh 
+./startup.sh 
+
+cd /opt/apache-tomcat-10/webapp/documentation/
+find . -name context.xml
+nano ./META-INF/context.xml
+
+disable <valve classname>
+
+cd /opt/apache-tomcat-10/webapp/server/
+find . -name context.xml
+nano ./META-INF/context.xml
+
+disable <valve classname>
+
+ss -tulnp | grep 8080
+
+
+
+====================================================================
+Step 2: – Download dd-java-agent.jar into /opt/ and give permission
+====================================================================
+
+$ cd /opt
+$ wget -O dd-java-agent.jar 'https://dtdg.co/latest-java-tracer'
+
+$ chmod 777 dd-java-agent.jar 
+
+===============================================
+Step 3: – Create setenv.sh and copy below code
+===============================================
+
+$ nano /opt/apache-tomcat-10.1.39/bin/setenv.sh 
+
+# Make sure dd.service and dd.env as per your choice.
+
+CATALINA_OPTS="$CATALINA_OPTS -javaagent:/opt/dd-java-agent.jar -Ddd.profiling.enabled=true -Ddd.logs.injection=true -Ddd.trace.sample.rate=1 -Ddd.service=srvmon -Ddd.env=lab -Ddd.version=1.1"
+
+======================================
+Step4: - DataDog apache configuration
+=======================================
+Enable Log Collection in the Agent
+
+sudo nano /etc/datadog-agent/datadog.yaml
+
+logs_enabled: true
+
+cd /etc/datadog-agent/conf.d/apache.d/
+
+nano conf.yaml
+
+init_config:
+
+instances:
+  ## @param apache_status_url - string - required
+  ## Status url of your Apache server.
+  #
+  - apache_status_url: http://localhost/server-status?auto
+  
+systemctl restart datadog-agent
+
+logs:
+   - type: file
+     path: /var/log/apache2/access.log
+     source: apache
+     service: apache
+   - type: file
+     path: /var/log/apache2/error.log
+     source: apache
+     service: apache
+
+systemctl restart datadog-agent
+
+Log Integration
+===================
+cd /etc/datadog-agent/conf.d/apache.d
+chmod -R 755 /var/log/apache2/
+chmod -R 755 /var/log/
+
+
+========================================
+Step 5: – Start Tomcat and Datadog Agent
+========================================
+
+$ systemctl restart datadog-agent
+$ cd /opt/apache-tomcat-10.1.39/bin
+$ chmod -R 775 .
+$ ./startup.sh
+$ ps -eaf | grep tomcat | grep dd
+
+
