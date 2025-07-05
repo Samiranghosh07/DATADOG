@@ -141,14 +141,6 @@ User → Frontend → API → Database
 
 ---
 
-## 🧠 Tips
-
-- Use tags like `env:prod`, `team:backend` for filtering.
-- Combine metrics with logs and traces for full observability.
-- Start with out-of-the-box dashboards, then customize.
-
----
-
 ## 📚 Resources
 ```
 - [Datadog Docs](https://docs.datadoghq.com/)
@@ -158,5 +150,4 @@ User → Frontend → API → Database
 - [RUM Setup](https://docs.datadoghq.com/real_user_monitoring/)
 - [Synthetic Monitoring](https://docs.datadoghq.com/synthetics/)
 ```
----
 
