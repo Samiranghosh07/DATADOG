@@ -142,12 +142,11 @@ User → Frontend → API → Database
 ---
 
 ## 📚 Resources
-```
+
 - [Datadog Docs](https://docs.datadoghq.com/)
 - [Agent Installation](https://docs.datadoghq.com/agent/)
 - [APM Setup](https://docs.datadoghq.com/tracing/)
 - [Log Collection](https://docs.datadoghq.com/logs/)
 - [RUM Setup](https://docs.datadoghq.com/real_user_monitoring/)
 - [Synthetic Monitoring](https://docs.datadoghq.com/synthetics/)
-```
----
+
